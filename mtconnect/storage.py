@@ -136,18 +136,3 @@ class MTBuffer():
 
         #update last item
         self.last_value[DataElement.MTC_dataid] = DataElement.value
-
-        
-
-
-#test cases
-if __name__ == "__main__":
-    import unittest
-    os.environ['BUFFER_SIZE']='10'
-    buffer = MTBuffer()
-    print(len(buffer.get_buffer()))
-    buffer = MTBuffer(buffer_length=12)
-    print(len(buffer.get_buffer()))
-
-
-
