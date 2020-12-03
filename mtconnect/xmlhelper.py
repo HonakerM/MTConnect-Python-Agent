@@ -1,53 +1,92 @@
 from xml.etree import ElementTree
-from device import MTDevice, MTComponent, MTDataItems
+from device import MTDevice, MTComponent, MTDataItem
         
 from json import loads, dumps
 
-def read_devices(file):
+#function to process all of the dataitems on a component
+def process_dataitem(item_list, device, component):
+    for item in item_list:
+        #get required objects
+        id = item.get('id')
+        category = item.get('category')
+        type = item.get('type')
 
-    device_tree = ElementTree.parse(file)
-    root = device_tree.getroot()
-    print(dir(root))
-    for device in root.getchildren():
-        #get identifiers
-        name = device.get('name')
-        uuid = device.get('uuid')
-        id = device.get('id')
-        description = device.find('Description')
-
-        #name and uuid are required for devices
-        if(not name or not uuid):
-            raise ValueError('Name and UUID required for device')
-        
-        if(description is not None):
-            description = description.text
-
-        new_device = MTDevice(name,uuid,id,description)
-        
-
-
-    '''
-    device_string =  open(file, 'r').read()
-    device_dictionary = xmltodict.parse(device_string,  process_namespaces=True)
-
-    device_dictionary = loads(dumps(device_dictionary))
-    device_list = device_dictionary['Devices']
-    print(device_list)
-    for device in device_list:
-        print(device)
-        description=None
-        if 'Description' in device:
-            description = device['Description']
-
-        new_device = MTDevice(device['@id'],device['@name'],device['@uuid'], description)
-        print(1)
-        for dataItem in device['DataItems']['DataItem']:
-            print(1)
-
-    #for devices in device_dictionary['Devices']:
-    #    print(device_dictionary[devices])
     
-    '''
+        new_item = MTDataItem(id,type,category,device,component)
+        
+        for attribute in item.items():
+            new_item.add_attribute(attribute[0], attribute[1])
+        component.add_item(new_item)
+        device.add_sub_item(new_item)
+
+#function to recursively add components
+def process_components(component_list, device, parent_component):
+    for component in component_list:
+        #get component attributes
+        name = component.get('name')
+        type = component.tag
+        id = component.get('id')
+
+        #create top level component
+        new_component = MTComponent(name, id, type, device, parent_component)
+        device.add_sub_component(new_component)
+
+        parent_component.add_subcomponent(new_component)
+
+        #get list of attributes
+        for attribute in component.items():
+            new_component.add_attribute(attribute[0], attribute[1])
+
+        #get list of data items
+        component_items = component.find('DataItems')
+        if(component_items is not None):
+            process_dataitem(component_items,device, new_component)
+
+        #get list of subcomponents
+        sub_component_item = component.find('Components')
+        if(sub_component_item is not None):
+            sub_component_list = sub_component_item.getchildren()
+            process_components(sub_component_list, device, new_component)        
+
+
+def read_devices(file):
+    #read data file
+    device_tree = ElementTree.parse(file)
+
+    #get devices
+    root = device_tree.getroot()
+    for device in root.getchildren():
+        #get identifiers for device
+        device_name = device.get('name')
+        device_uuid = device.get('uuid')
+        device_id = device.get('id')
+        device_description = device.find('Description')
+
+        #get the text value for the description
+        if(device_description is not None):
+            device_description = device_description.text
+
+        #create device
+        new_device = MTDevice(device_name,device_uuid,device_id,device_description)
+
+
+        #get list of attributes
+        for attribute in device.items():
+            new_device.add_attribute(attribute[0], attribute[1])
+
+        #get list of data items
+        device_items = device.find('DataItems')
+        if(device_items is not None):
+            process_dataitem(device_items,new_device, new_device)
+
+        #get list of subcomponents
+        component_item = device.find('Components')
+        if(component_item is not None):
+            component_list = component_item.getchildren()
+            process_components(component_list, new_device, new_device)
+        
+        print(new_device.display_tree())
+
 read_devices('../tests/test_probe.xml')
         
     
