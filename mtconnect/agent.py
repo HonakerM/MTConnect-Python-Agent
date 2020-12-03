@@ -1,4 +1,10 @@
-from mtconnect.storage import MTBuffer, MTDataEntity
+#general imports
+import os
+
+
+#mtconnect imports
+from .storage import MTBuffer, MTDataEntity
+from .xmlhelper import read_devices
 
 class MTConnect():
     # ! Use: Handle MTConnect agent
@@ -6,8 +12,13 @@ class MTConnect():
 
     buffer = None
     
-    def __init__(self):
+    device_dict = None
+
+    def __init__(self,file_location='./device.xml'):
         self.buffer = MTBuffer()
+        file_location = os.getenv('MTCDeviceFile',file_location)
+        device_dict = read_devices(file_location)
+        
 
     #validate data
     def validate_data(self,data):

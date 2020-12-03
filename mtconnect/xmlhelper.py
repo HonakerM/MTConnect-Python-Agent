@@ -1,7 +1,8 @@
+#general imports
 from xml.etree import ElementTree
-from device import MTDevice, MTComponent, MTDataItem
-        
-from json import loads, dumps
+
+#MTConnect imports
+from .device import MTDevice, MTComponent, MTDataItem
 
 #function to process all of the dataitems on a component
 def process_dataitem(item_list, device, component):
@@ -56,7 +57,13 @@ def process_components(component_list, device, parent_component):
 
 def read_devices(file):
     #read data file
-    device_tree = ElementTree.parse(file)
+    try:
+        device_tree = ElementTree.parse(file)
+    except FileNotFoundError:
+        raise ValueError('{} is not a valid file'.format(file))
+
+    #list of devices
+    device_list = {}
 
     #get devices
     root = device_tree.getroot()
@@ -88,9 +95,10 @@ def read_devices(file):
         if(component_item is not None):
             component_list = component_item.getchildren()
             process_components(component_list, new_device, new_device)
-        
-        print(new_device.display_tree())
 
-read_devices('../tests/test_probe.xml')
+        device_list[new_device.id]=new_device
+    return device_list
+        
+
         
     

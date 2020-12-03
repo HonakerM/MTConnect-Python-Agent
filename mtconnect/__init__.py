@@ -1,1 +1,1 @@
-from .mtconnect import MTConnect
+from .agent import MTConnect
