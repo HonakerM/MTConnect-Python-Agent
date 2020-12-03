@@ -12,41 +12,74 @@ def tree_helper(component, level=0):
 
     return output_string
 
-
-class MTDevice:
+class MTGenericContainer:
     #generic variables
     id = None
     name = None
-    uuid = None
     description = None
-    
+
+    #parent container
+    parent_component = None
+
+    #attributes
+    attributes = {}
+
     #variables used for storage of sub items
     sub_components = {}
     items = {}
 
-    #variables used for traversal of sub items
-    item_list = {}
-    component_list = {}
-
-    attributes = {}
-
-    def __init__(self,name, uuid,id, description=None):
+    def __init__(self,name, id, parent_component, description=None):
         if(id is None):
             raise ValueError('Missing required value for Component')
         
         self.id = id
         self.name = name
-        self.uuid = uuid
         self.description = description
-    
+        self.sub_components = {}
+        self.items = {}
+
     #add subaccount directly to device
     def add_subcomponent(self, Component):
         self.sub_components[Component.id] = Component
-        self.component_list[Component.id] = Component
-
+    
     #add add item directly to device
     def add_item(self, Item):
         self.items[Item.id] = Item
+
+    def add_attribute(self, name,value):
+        self.attributes[name] = value
+    
+    def get_sub_components(self):
+        return list(self.sub_components.values())
+    
+    def get_sub_items(self):
+        return list(self.items.values())
+
+    def display_tree(self):
+        return tree_helper(self)
+
+class MTDevice(MTGenericContainer):
+    #generic variables
+    uuid = None
+
+
+    #variables used for traversal of sub items
+    item_list = {}
+    component_list = {}
+    
+    def __init__(self,name, uuid,id, description=None):
+        super().__init__(name, id, None, description)
+
+        self.uuid = uuid
+        self.item_list={}
+        self.component_list={}
+    
+    def add_subcomponent(self, Component):
+        super().add_subcomponent(Component)
+        self.component_list[Component.id] = Component
+
+    def add_item(self, Item):
+        super().add_item(Item)
         self.item_list[Item.id] = Item
 
     #add device to device list for traversal
@@ -57,75 +90,18 @@ class MTDevice:
     def add_sub_component(self, Component):
         self.component_list[Component.id] = Component
 
-    def add_attribute(self, name,value):
-        self.attributes[name] = value
-    
-    def get_sub_components(self):
-        return list(self.sub_components.values())
-    
-    def get_sub_items(self):
-        return list(self.items.values())
-
-    def display_tree(self):
-        return tree_helper(self)
-
-class MTComponent:
+class MTComponent(MTGenericContainer):
     #descriptor variables
-    id = None
-    name = None
     type = None
 
     #parent variables
     device = None
-    parent_component = None
-
-    #variables used for storage of subaccounts
-    sub_components = {}
-    items = {}
-
-    attributes = {}
-
-    def __init__(self,name, id, type, device, parent_component):
-        if(None in [id, type, device]):
-            raise ValueError('Missing required value for Component')
-            
-        self.id = id
-        self.name = name
+    
+    def __init__(self,name, id, type,  device, parent_component, description=None):
+        super().__init__(name,id, parent_component, description)
+  
         self.type = type
         self.device = device
-        self.parent_component = parent_component
-
-        self.sub_components = {}
-        self.items = {}
-        self.attributes = {}
-    
-    #add subaccount directly to device
-    def add_subcomponent(self, Component):
-
-        #self.sub_components[Component.id] = 1
-        self.sub_components[Component.id] = Component
-
-
-    #add add item directly to device
-    def add_item(self, Item):
-        self.items[Item.id] = Item
-
-    def add_attribute(self, name,value):
-        self.attributes[name] = value
-    
-    def get_sub_components(self):
-        return list(self.sub_components.values())
-    
-    def get_sub_items(self):
-        return list(self.items.values())
-
-    def display_tree(self):
-        return tree_helper(self)
-
-    
-
-
-
 
 class MTDataItem:
     id = None

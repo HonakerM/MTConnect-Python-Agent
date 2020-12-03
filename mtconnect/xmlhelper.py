@@ -26,9 +26,14 @@ def process_components(component_list, device, parent_component):
         name = component.get('name')
         type = component.tag
         id = component.get('id')
+        description = component.find('Description')
+
+        #get the text value for the description
+        if(description is not None):
+            description = description.text
 
         #create top level component
-        new_component = MTComponent(name, id, type, device, parent_component)
+        new_component = MTComponent(name, id, type, device, parent_component, description)
         device.add_sub_component(new_component)
 
         parent_component.add_subcomponent(new_component)
@@ -68,7 +73,6 @@ def read_devices(file):
 
         #create device
         new_device = MTDevice(device_name,device_uuid,device_id,device_description)
-
 
         #get list of attributes
         for attribute in device.items():
