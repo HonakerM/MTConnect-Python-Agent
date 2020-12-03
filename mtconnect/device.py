@@ -1,3 +1,5 @@
+from xml.etree import ElementTree
+
 
 #class helper for MTDevice/MTComponent to display component tree
 def tree_helper(component, level=0):
@@ -18,57 +20,68 @@ class MTGenericContainer:
     name = None
     description = None
 
-    #parent container
-    parent_component = None
-
     #attributes
     attributes = {}
+
+    #parent container
+    parent_component = None
 
     #variables used for storage of sub items
     sub_components = {}
     items = {}
 
-    def __init__(self,name, id, parent_component, description=None):
+    #raw xml data
+    xml_data = None
+
+    def __init__(self,name, id, xml_data, parent_component, description=None):
         if(id is None):
             raise ValueError('Missing required value for Component')
         
         self.id = id
         self.name = name
+        self.xml_data = xml_data
         self.description = description
         self.sub_components = {}
         self.items = {}
+        
 
-    #add subaccount directly to device
+    #add subaccount directly to container
     def add_subcomponent(self, Component):
         self.sub_components[Component.id] = Component
     
-    #add add item directly to device
+    #add item directly to conrainter
     def add_item(self, Item):
         self.items[Item.id] = Item
 
+    #add attribute to container
     def add_attribute(self, name,value):
         self.attributes[name] = value
     
+    #get list of subcomponents
     def get_sub_components(self):
         return list(self.sub_components.values())
     
+    #get list of dataitems
     def get_sub_items(self):
         return list(self.items.values())
 
+
     def display_tree(self):
         return tree_helper(self)
+    
+    def generate_xml(self):
+        return ElementTree.tostring(self.xml_data)
 
 class MTDevice(MTGenericContainer):
     #generic variables
     uuid = None
 
-
     #variables used for traversal of sub items
     item_list = {}
     component_list = {}
     
-    def __init__(self,name, uuid,id, description=None):
-        super().__init__(name, id, None, description)
+    def __init__(self,name,id,xml_data, uuid=None, description=None):
+        super().__init__(name, id, xml_data, None, description)
 
         self.uuid = uuid
         self.item_list={}
@@ -97,8 +110,8 @@ class MTComponent(MTGenericContainer):
     #parent variables
     device = None
     
-    def __init__(self,name, id, type,  device, parent_component, description=None):
-        super().__init__(name,id, parent_component, description)
+    def __init__(self,name, id, type, xml_data, parent_component, device, description=None):
+        super().__init__(name,id, xml_data, parent_component, description)
   
         self.type = type
         self.device = device
