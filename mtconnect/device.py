@@ -1,5 +1,8 @@
+#general imports
 from xml.etree import ElementTree
 
+#import mtcitems
+from .standard_list import MTC_DataID_list
 
 #class helper for MTDevice/MTComponent to display component tree
 def tree_helper(component, level=0):
@@ -102,6 +105,9 @@ class MTDevice(MTGenericContainer):
     #add component to device list for traversal
     def add_sub_component(self, Component):
         self.component_list[Component.id] = Component
+    
+    def get_sub_item(self):
+        return self.item_list.keys()
 
 class MTComponent(MTGenericContainer):
     #descriptor variables
@@ -129,6 +135,16 @@ class MTDataItem:
     def __init__(self, id, type, category, device, component):
         if(None in [id, type,category, component, device]):
             raise ValueError('Missing required value for DataItem')
+        
+        if(category not in ['SAMPLE','CONDITION','EVENT']):
+            raise ValueError('{} is not a valid category'.format(category))
+
+        if(type not in MTC_DataID_list):
+            raise ValueError('{} is not a valid type'.format(type))
+
+        if(id in device.get_sub_item()):
+            raise ValueError('id must be unique. {} has been used'.format(id))
+
         self.id = id
         self.type = type
         self.category = category

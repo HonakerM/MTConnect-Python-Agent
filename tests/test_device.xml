@@ -4,8 +4,6 @@
 <DataItems>
 <DataItem category="EVENT" id="avail" name="avail" type="AVAILABILITY"/>
 <DataItem category="EVENT" id="functionalmode" name="functionalmode" type="FUNCTIONAL_MODE"/>
-<DataItem category="EVENT" id="d1_asset_chg" type="ASSET_CHANGED"/>
-<DataItem category="EVENT" id="d1_asset_rem" type="ASSET_REMOVED"/>
 </DataItems>
 <Components>
 <Axes id="a" name="base">
@@ -112,10 +110,10 @@
 <DataItem category="CONDITION" id="logic" name="logic_cond" type="LOGIC_PROGRAM"/>
 <DataItem category="CONDITION" id="system" name="system_cond" type="SYSTEM"/>
 <DataItem category="EVENT" id="estop" name="estop" type="EMERGENCY_STOP"/>
-<DataItem category="SAMPLE" id="atime" name="auto_time" nativeUnits="SECOND" subType="x:AUTO" type="ACCUMULATED_TIME" units="SECOND"/>
-<DataItem category="SAMPLE" id="yltime" name="total_time" nativeUnits="SECOND" subType="x:TOTAL" type="ACCUMULATED_TIME" units="SECOND"/>
-<DataItem category="SAMPLE" id="ctime" name="cut_time" nativeUnits="SECOND" subType="x:CUT" type="ACCUMULATED_TIME" units="SECOND"/>
-<DataItem category="SAMPLE" id="tcltime" name="total_auto_cut_time" nativeUnits="SECOND" subType="x:TOTALCUTTIME" type="ACCUMULATED_TIME" units="SECOND"/>
+<DataItem category="SAMPLE" id="atime" name="auto_time" nativeUnits="SECOND" subType="AUTO" type="ACCUMULATED_TIME" units="SECOND"/>
+<DataItem category="SAMPLE" id="yltime" name="total_time" nativeUnits="SECOND" subType="TOTAL" type="ACCUMULATED_TIME" units="SECOND"/>
+<DataItem category="SAMPLE" id="ctime" name="cut_time" nativeUnits="SECOND" subType="CUT" type="ACCUMULATED_TIME" units="SECOND"/>
+<DataItem category="SAMPLE" id="tcltime" name="total_auto_cut_time" nativeUnits="SECOND" subType="TOTALCUTTIME" type="ACCUMULATED_TIME" units="SECOND"/>
 <DataItem category="EVENT" id="pltnum" name="pallet_num" type="PALLET_ID"/>
 </DataItems>
 <Components>
@@ -128,19 +126,15 @@
 <DataItem category="EVENT" id="pfo" name="Fovr" subType="PROGRAMMED" type="PATH_FEEDRATE_OVERRIDE"/>
 <DataItem category="EVENT" id="Sovr" name="Sovr" type="ROTARY_VELOCITY_OVERRIDE"/>
 <DataItem category="EVENT" id="pgm" name="program" type="PROGRAM"/>
-<DataItem category="EVENT" id="spgm" name="subprogram" subType="x:SUB" type="PROGRAM"/>
+<DataItem category="EVENT" id="spgm" name="subprogram" subType="SUB" type="PROGRAM"/>
 <DataItem category="EVENT" id="ln" name="line" type="LINE"/>
-<DataItem category="EVENT" id="unit" name="unitNum" type="x:UNIT"/>
-<DataItem category="EVENT" id="seq" name="sequenceNum" type="x:SEQUENCE_NUMBER"/>
 <DataItem category="EVENT" id="pc" name="PartCountAct" type="PART_COUNT"/>
 <DataItem category="SAMPLE" coordinateSystem="WORK" id="pf" name="Fact" subType="ACTUAL" type="PATH_FEEDRATE"/>
 <DataItem category="EVENT" id="tid" name="Tool_number" type="TOOL_NUMBER"/>
-<DataItem category="EVENT" id="tid2" name="Tool_group" type="x:TOOL_GROUP"/>
-<DataItem category="EVENT" id="tid3" name="Tool_suffix" type="x:TOOL_SUFFIX"/>
 <DataItem category="EVENT" id="exec" name="execution" type="EXECUTION"/>
 <DataItem category="EVENT" id="mode" name="mode" type="CONTROLLER_MODE"/>
 <DataItem category="EVENT" id="pcmt" name="program_cmt" type="PROGRAM_COMMENT"/>
-<DataItem category="EVENT" id="spcmt" name="subprogram_cmt" subType="x:SUB" type="PROGRAM_COMMENT"/>
+<DataItem category="EVENT" id="spcmt" name="subprogram_cmt" subType="SUB" type="PROGRAM_COMMENT"/>
 <DataItem category="CONDITION" id="motion" name="motion_cond" type="MOTION_PROGRAM"/>
 <DataItem category="CONDITION" id="path_system" name="path_system" type="SYSTEM"/>
 </DataItems>

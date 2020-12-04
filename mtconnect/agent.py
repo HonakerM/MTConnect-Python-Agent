@@ -37,12 +37,19 @@ class MTConnect():
         self.instanceId = uuid.uuid4().int & (1<<64)-1
 
     #validate data
-    def validate_data(self,data):
+    def validate_dataId(self,dataId):
+        for device in self.device_dict:
+            if(dataId in device.get_sub_item()):
+                return True
+        return False
+
+    def validate_dataValue(self, dataId, value):
         pass
 
     #push data from machines
-    def push_data(self, DataId, value, type=None, sub_type=None):
-        pass
+    def push_data(self, dataId, value, type=None, sub_type=None):
+        
+        new_data = MTDataEntity(dataId, value,type,sub_type)
     
     #run MTConnect probe command
     def probe(self):
