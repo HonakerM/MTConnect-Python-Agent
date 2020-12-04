@@ -133,6 +133,7 @@ class MTDataItem:
     device = None
 
     def __init__(self, id, type, category, device, component):
+        category = category.upper()
         if(None in [id, type,category, component, device]):
             raise ValueError('Missing required value for DataItem')
         

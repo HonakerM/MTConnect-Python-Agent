@@ -36,31 +36,33 @@ class MTConnect():
         #generate instanceId -64bit int uuid4 is 128 so shift it
         self.instanceId = uuid.uuid4().int & (1<<64)-1
 
-    #validate data
-    def validate_dataId(self,dataId):
-        for device in self.device_dict:
+    #validate pushing data
+    def get_dataId(self,dataId):
+        for device in self.device_dict.values():
             if(dataId in device.get_sub_item()):
-                return True
-        return False
-
-    def validate_dataValue(self, dataId, value):
-        pass
+                return device.item_list[dataId]
+        raise ValueError('DataID {} is not found'.format(dataId))
 
     #push data from machines
-    def push_data(self, dataId, value, type=None, sub_type=None):
-        
-        new_data = MTDataEntity(dataId, value,type,sub_type)
-    
-    #run MTConnect probe command
-    def probe(self):
-        root_container = ElementTree.Element('MTConnectDevices')
-        header_element = ElementTree.SubElement(root_container, 'Header')
+    def push_data(self, dataId, value):
+        dataItem = self.get_dataId(dataId)
+        new_data = MTDataEntity(dataItem, value)
+        self.buffer.push(new_data)
+
+    def get_header(self):
+        header_element = ElementTree.Element('Header')
         header_element.set('version','1.6.0.0')
         header_element.set('instanceId',str(self.instanceId))
         header_element.set('creationTime',datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"))
         header_element.set('bufferSize',str(self.buffer.buffer_size))
         header_element.set('assetBufferSize','0')
         header_element.set('assetCount','0')
+        return header_element
+
+    #run MTConnect probe command
+    def probe(self):
+        root_container = ElementTree.Element('MTConnectDevices')
+        root_container.append(self.get_header())
 
         device_container = ElementTree.SubElement(root_container, 'Devices')
         for device in self.device_dict:

@@ -1,6 +1,6 @@
 import os #enviormentl variabels
 import datetime #get currenttime
-
+import numbers #verrify value is number
 
 class MTDataEntity():
     # ! Use: Handle the individual data values
@@ -10,30 +10,28 @@ class MTDataEntity():
     sequence_number = None
     timestamp = None
 
-    #data category and subcategory in generic terms
-    type = None
-    sub_type = None
-
-    #data category in MTConnect terms
-    MTC_dataid = None
+    #The MTDataItem that this data refernced
+    dataItem = None
 
     #actual value
     value = None
 
 
-    def __init__(self, DataId, value, type=None, sub_type=None):
+    def __init__(self, dataItem, value):
         #set values
-        self.MTC_dataid = DataId
+        self.dataItem = dataItem
+
+        if(dataItem.category =='SAMPLE' and not isinstance(value, numbers.Number)):
+            raise ValueError('SAMPLE value must be number')
+            
+        if(dataItem.category =='EVENT' and not isinstance(value, str)):
+            raise ValueError('EVENT value must be a string')
+
+        if(dataItem.category =='CONDITION' and value not in ['UNAVAILABLE', 'NORMAL', 'WARNING', 'FAULT']):
+            raise ValueError('CONDITION value must be one of UNAVAILABLE, NORMAL, WARNING, or FAULT')
+
         self.value = value
         self.timestamp = datetime.datetime.utcnow()
-
-        #if there is a type
-        if(type is not None):
-            self.type = type
-
-        #if subtype is defined
-        if(sub_type is not None):
-            self.sub_type = sub_type
 
     #
     # Accessor Functions 
@@ -90,6 +88,8 @@ class MTBuffer():
         if(seq<self.first_sequence):
             return ([],self.first_sequence)
         
+        if(count <= 0):
+            return ([],seq))
         #get location in the buffer
         buffer_loc = seq - self.first_sequence
 
@@ -135,4 +135,4 @@ class MTBuffer():
             self.first_sequence = sequence_number
 
         #update last item
-        self.last_value[DataElement.MTC_dataid] = DataElement.value
+        self.last_value[DataElement.dataItem.id] = DataElement.value
