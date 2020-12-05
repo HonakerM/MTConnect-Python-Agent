@@ -2,6 +2,8 @@ import os #enviormentl variabels
 import datetime #get currenttime
 import numbers #verrify value is number
 
+#MTConnect Imports
+
 class MTDataEntity():
     # ! Use: Handle the individual data values
     # ? Data: Holds sequence number, tiemstamp, and data 
@@ -89,7 +91,7 @@ class MTBuffer():
             return ([],self.first_sequence)
         
         if(count <= 0):
-            return ([],seq))
+            return ([],seq)
         #get location in the buffer
         buffer_loc = seq - self.first_sequence
 
@@ -107,14 +109,20 @@ class MTBuffer():
     def push(self, DataElement):
         #if DataElement is not the correct type
         if(not isinstance(DataElement,MTDataEntity)):
-            raise ValueError("DataElement is not of type MTDataEntity")
+            raise TypeError("DataElement is not of type MTDataEntity")
 
         #if sequence number is greater than the buffer size
         if(self.buffer_pos >= self.buffer_size):
             #get last item
-            self.buffer.pop(0)
+            last_item = self.buffer.pop(0)
+            
+            #update last item list
+            self.last_value[last_item.dataItem.id] = last_item
+
+            #update sequence
             self.first_sequence = self.buffer[0].sequence_number
 
+            #add last item
             self.buffer.append(None)
             self.buffer_pos = self.buffer_size-1
         
@@ -133,6 +141,3 @@ class MTBuffer():
         self.last_sequence = sequence_number
         if(self.first_sequence is None):
             self.first_sequence = sequence_number
-
-        #update last item
-        self.last_value[DataElement.dataItem.id] = DataElement.value

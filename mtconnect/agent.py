@@ -3,10 +3,13 @@ import os
 import uuid  
 from xml.etree import ElementTree
 from datetime import datetime
+from numbers import Number
 
 #mtconnect imports
 from .storage import MTBuffer, MTDataEntity
 from .xmlhelper import read_devices
+from .error import MTInvalidRequest, MTInvalidRange
+
 
 class MTConnect():
     # ! Use: Handle MTConnect agent
@@ -75,5 +78,18 @@ class MTConnect():
         pass
 
     #run MTConnnect current command
-    def current(self, at, path):
+    def current(self, path, at, interval):
+        if(at is not None and interval is not None):
+            raise MTInvalidRequest("At and Interval must not be used in conjunction")
+
+        if(not isinstance(at, Number) and at<0):
+            raise MTInvalidRequest("At must be a non negative number")
+
+        if(at < self.buffer.first_sequence or at > self.buffer.last_sequence):
+            raise MTInvalidRange("At must be between {} and {}".format(self.buffer.first_sequence, self.buffer.last_sequence))
+
+        
+        pass
+
+    def error(self, error_text):
         pass

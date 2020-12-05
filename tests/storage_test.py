@@ -3,6 +3,7 @@ import unittest
 
 #import storage objects
 from mtconnect.storage import MTBuffer, MTDataEntity
+from mtconnect.device import MTDataItem, MTDevice
 
 #import libraries for testing
 import os
@@ -13,14 +14,23 @@ import datetime
 class DataEntity(unittest.TestCase):
 
     def testDataCreation(self):
-        entity = MTDataEntity('test',1)
+
+        test_device = MTDevice('test_device','1',None)
+        test_item_1 = MTDataItem('test_1','SYSTEM','SAMPLE',test_device,test_device)
+
+        entity = MTDataEntity(test_item_1,1)
+
 
         self.assertTrue(isinstance(entity.timestamp, type(datetime.datetime.now())))
-        self.assertEqual(entity.MTC_dataid,'test')
+        self.assertEqual(entity.dataItem.id,'test_1')
         self.assertEqual(entity.value,1)
 
     def testSequenceNumber(self):
-        entity = MTDataEntity('test',1)
+        test_device = MTDevice('test_device','1',None)
+        test_item_1 = MTDataItem('test_1','SYSTEM','SAMPLE',test_device,test_device)
+
+
+        entity = MTDataEntity(test_item_1,1)
         entity.set_sequence(1)
         self.assertEqual(entity.sequence_number,1)
 
@@ -39,9 +49,14 @@ class BufferTest(unittest.TestCase):
         #initalize buffer
         buffer = MTBuffer(buffer_length=2)
 
-        data_1 = MTDataEntity('cat_1',1)
-        data_2 = MTDataEntity('cat_1',2)
-        data_3 = MTDataEntity('cat_2',1)
+        test_device = MTDevice('test_device','1',None)
+        test_item_1 = MTDataItem('test_1','SYSTEM','SAMPLE',test_device,test_device)
+        test_item_2 = MTDataItem('test_2','SYSTEM','SAMPLE',test_device,test_device)
+
+
+        data_1 = MTDataEntity(test_item_1,1)
+        data_2 = MTDataEntity(test_item_1,2)
+        data_3 = MTDataEntity(test_item_2,1)
 
         buffer.push(data_1)
         self.assertEqual(data_1.sequence_number, 1)
@@ -60,12 +75,15 @@ class BufferTest(unittest.TestCase):
         self.assertEqual(buffer.last_sequence,3)
         self.assertEqual(buffer.first_sequence,2)
         
-        self.assertEqual(buffer.last_value, {'cat_1':2,'cat_2':1})
+        self.assertEqual(buffer.last_value, {'test_1':data_1})
 
     def testBufferGet(self):
         buffer = MTBuffer(buffer_length=2)
-        data_1 = MTDataEntity('cat_1',1)
-        data_2 = MTDataEntity('cat_1',2)
+
+        test_device = MTDevice('test_device','1',None)
+        test_item = MTDataItem('test_1','SYSTEM','SAMPLE',test_device,test_device)
+        data_1 = MTDataEntity(test_item,1)
+        data_2 = MTDataEntity(test_item,2)
         buffer.push(data_1)
         buffer.push(data_2)
 
