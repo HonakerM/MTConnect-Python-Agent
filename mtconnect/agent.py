@@ -40,8 +40,9 @@ class MTConnect():
 
         #read device information
         file_location = os.getenv('MTCDeviceFile',loc)
-        self.device_dict, self.device_xml = read_devices(file_location)
+        device_data = read_devices(file_location)
 
+        self.device_dict, self.device_xml  = device_data
         for device in self.device_dict.values():
             self.item_dict.update(device.item_dict)
             self.component_dict.update(device.component_dict)
@@ -111,11 +112,7 @@ class MTConnect():
         else:
             component_list = list(self.device_dict.values())
         
-
-
-
-        #
-        
+        print(component_list)
                 
 
     def error(self, error_text):

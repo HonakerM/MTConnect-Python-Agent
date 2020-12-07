@@ -119,6 +119,9 @@ class MTBuffer():
         if(self.buffer_pos >= self.buffer_size):
             #get last item
             last_item = self.buffer.pop(0)
+
+            #remove last item from refernced Device
+            last_item.dataItem.pop_data()
             
             #update last item list
             self.last_value[last_item.dataItem.id] = last_item
@@ -139,6 +142,9 @@ class MTBuffer():
         #set sequence number and add to list
         DataElement.set_sequence(sequence_number)
         self.buffer[self.buffer_pos] = DataElement
+
+        #add data to refernced dataItem
+        DataElement.dataItem.push_data(DataElement)
 
         #update counter and static variables
         self.buffer_pos = self.buffer_pos + 1

@@ -17,17 +17,41 @@ def tree_helper(component, level=0):
 
     return output_string
 
-class MTGenericContainer:
+class MTGeneric:
+    # ! Use: Generic item for all parts of device. Includes components and data_list
+    # ? Data: Holds id,name, and attributes as well as parent componnetn and data_list
+
     #generic variables
     id = None
     name = None
-    description = None
 
     #attributes
     attributes = {}
 
-    #parent container
+    #parrent component
     parent_component = None
+
+    def __init__(self, id, name, component):
+        if(id is None):
+            raise ValueError('Missing required value for MTC')
+        
+
+        self.id = id
+        self.name = name
+        self.parent_component = component
+
+        self.attributes = {}
+        self.data_list = []
+
+
+    #add attribute to container
+    def add_attribute(self, name, value):
+        self.attributes[name] = value
+    
+
+class MTGenericContainer(MTGeneric):
+    #generic variables
+    description = None
 
     #variables used for storage of sub items
     sub_components = {}
@@ -36,12 +60,9 @@ class MTGenericContainer:
     #raw xml data
     xml_data = None
 
-    def __init__(self,name, id, xml_data, parent_component, description=None):
-        if(id is None):
-            raise ValueError('Missing required value for Component')
-        
-        self.id = id
-        self.name = name
+    def __init__(self,id, name, xml_data, parent_component, description=None):
+        super().__init__(id, name, parent_component)
+
         self.xml_data = xml_data
         self.description = description
         self.sub_components = {}
@@ -55,10 +76,6 @@ class MTGenericContainer:
     #add item directly to conrainter
     def add_item(self, Item):
         self.items[Item.id] = Item
-
-    #add attribute to container
-    def add_attribute(self, name,value):
-        self.attributes[name] = value
     
     #get list of subcomponents
     def get_sub_components(self):
@@ -83,9 +100,8 @@ class MTDevice(MTGenericContainer):
     item_dict = {}
     component_dict = {}
     
-    def __init__(self,name,id,xml_data, uuid=None, description=None):
-        super().__init__(name, id, xml_data, None, description)
-
+    def __init__(self,id, name,xml_data, uuid=None, description=None):
+        super().__init__(id, name, xml_data, None, description)
         self.uuid = uuid
         self.item_dict={}
         self.component_dict={}
@@ -116,23 +132,26 @@ class MTComponent(MTGenericContainer):
     #parent variables
     device = None
     
-    def __init__(self,name, id, type, xml_data, parent_component, device, description=None):
-        super().__init__(name,id, xml_data, parent_component, description)
+    def __init__(self,id, name, type, xml_data, parent_component, device, description=None):
+        super().__init__(id,name, xml_data, parent_component, description)
   
         self.type = type
         self.device = device
 
-class MTDataItem:
-    id = None
+class MTDataItem(MTGeneric):
     category = None
     type = None
-    attributes = {}
 
     #parent variable
-    component = None
     device = None
 
+    
+    #list of data entity assigned
+    data_list = []
+
     def __init__(self, id, type, category, device, component):
+        
+
         category = category.upper()
         if(None in [id, type,category, component, device]):
             raise ValueError('Missing required value for DataItem')
@@ -145,16 +164,20 @@ class MTDataItem:
 
         if(id in device.get_sub_item()):
             raise ValueError('id must be unique. {} has been used'.format(id))
+        
+        super().__init__(id,None,component)
 
-        self.id = id
         self.type = type
         self.category = category
 
         self.device = device
-        self.component = component
     
-    def add_attribute(self, name, value):
-        self.attributes[name] = value
+    #Handle DataEntitys assigned
+    def push_data(self, DataEntity):
+        self.data_list.append(DataEntity)
+    
+    def pop_data(self):
+        self.data_list.pop(0)
 
 
     

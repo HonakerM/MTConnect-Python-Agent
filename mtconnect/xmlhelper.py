@@ -57,7 +57,7 @@ def process_components(component_list, device, parent_component):
             description = description.text
 
         #create top level component
-        new_component = MTComponent(name, id, type, component, parent_component, device, description)
+        new_component = MTComponent(id, name, type, component, parent_component, device, description)
         device.add_sub_component(new_component)
 
         parent_component.add_subcomponent(new_component)
@@ -102,8 +102,8 @@ def read_devices(file):
             device_description = device_description.text
 
         #create device
-        new_device = MTDevice(device_name,device_id,device, device_uuid,device_description)
-
+        new_device = MTDevice(device_id,device_name,device, device_uuid,device_description)
+        
         #get list of attributes
         for attribute in device.items():
             new_device.add_attribute(attribute[0], attribute[1])
@@ -120,6 +120,7 @@ def read_devices(file):
             process_components(component_list, new_device, new_device)
 
         device_list[new_device.id]=new_device
+
     return (device_list, device_tree)
 
         
