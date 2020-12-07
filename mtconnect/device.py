@@ -80,34 +80,34 @@ class MTDevice(MTGenericContainer):
     uuid = None
 
     #variables used for traversal of sub items
-    item_list = {}
-    component_list = {}
+    item_dict = {}
+    component_dict = {}
     
     def __init__(self,name,id,xml_data, uuid=None, description=None):
         super().__init__(name, id, xml_data, None, description)
 
         self.uuid = uuid
-        self.item_list={}
-        self.component_list={}
+        self.item_dict={}
+        self.component_dict={}
     
     def add_subcomponent(self, Component):
         super().add_subcomponent(Component)
-        self.component_list[Component.id] = Component
+        self.component_dict[Component.id] = Component
 
     def add_item(self, Item):
         super().add_item(Item)
-        self.item_list[Item.id] = Item
+        self.item_dict[Item.id] = Item
 
     #add device to device list for traversal
     def add_sub_item(self, Item):
-        self.item_list[Item.id] = Item
+        self.item_dict[Item.id] = Item
 
     #add component to device list for traversal
     def add_sub_component(self, Component):
-        self.component_list[Component.id] = Component
+        self.component_dict[Component.id] = Component
     
     def get_sub_item(self):
-        return self.item_list.keys()
+        return self.item_dict.keys()
 
 class MTComponent(MTGenericContainer):
     #descriptor variables

@@ -7,7 +7,7 @@ from numbers import Number
 
 #mtconnect imports
 from .storage import MTBuffer, MTDataEntity
-from .xmlhelper import read_devices
+from .xmlhelper import read_devices, process_path
 from .error import MTInvalidRequest, MTInvalidRange
 
 
@@ -24,6 +24,12 @@ class MTConnect():
 
     #dictionary of devices
     device_dict = None
+    device_xml = None
+
+    #used for traversal
+    item_dict = {} # list of a
+    component_dict = {} # list of components
+
 
     def __init__(self,loc='./device.xml',hostname='http://0.0.0.0:80'):
         #set variables
@@ -34,7 +40,11 @@ class MTConnect():
 
         #read device information
         file_location = os.getenv('MTCDeviceFile',loc)
-        self.device_dict = read_devices(file_location)
+        self.device_dict, self.device_xml = read_devices(file_location)
+
+        for device in self.device_dict.values():
+            self.item_dict.update(device.item_dict)
+            self.component_dict.update(device.component_dict)
 
         #generate instanceId -64bit int uuid4 is 128 so shift it
         self.instanceId = uuid.uuid4().int & (1<<64)-1
@@ -78,18 +88,35 @@ class MTConnect():
         pass
 
     #run MTConnnect current command
-    def current(self, path, at, interval):
+    def current(self, at, path=None, interval=None):
+        #data validation
+        if(at is None and interval is None):
+            raise MTInvalidRequest("Either At or Interval must not be None")
+
         if(at is not None and interval is not None):
             raise MTInvalidRequest("At and Interval must not be used in conjunction")
 
         if(not isinstance(at, Number) and at<0):
             raise MTInvalidRequest("At must be a non negative number")
+        
+        if(self.buffer.empty()):
+            raise MTInvalidRange("Buffer is currently empty")
 
         if(at < self.buffer.first_sequence or at > self.buffer.last_sequence):
             raise MTInvalidRange("At must be between {} and {}".format(self.buffer.first_sequence, self.buffer.last_sequence))
 
+        #apply path variable
+        if(path is not None):
+            component_list = process_path(self.device_xml, path, self.item_dict, self.component_dict)
+        else:
+            component_list = list(self.device_dict.values())
         
-        pass
+
+
+
+        #
+        
+                
 
     def error(self, error_text):
         pass

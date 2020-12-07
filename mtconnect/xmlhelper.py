@@ -4,10 +4,28 @@ from xml.etree import ElementTree
 #MTConnect imports
 from .device import MTDevice, MTComponent, MTDataItem
 
+
+
+
+#
+# AGENT XML Helpers
+#
+def process_path(device_xml,path, item_dict, component_dict):  
+    xml_list = device_xml.findall(path)
+    component_list = []
+    for element in xml_list:
+        id = element.get('id')
+        if(id in item_dict):
+            component_list.append(item_dict[id])
+
+        if(id in component_dict):
+            component_list.append(component_dict[id])
+    return component_list
+        
+
 #
 # DEVICE XML Helpers
 #
-
 
 #function to process all of the dataitems on a component
 def process_dataitem(item_list, device, component):
@@ -102,7 +120,7 @@ def read_devices(file):
             process_components(component_list, new_device, new_device)
 
         device_list[new_device.id]=new_device
-    return device_list
+    return (device_list, device_tree)
 
         
     

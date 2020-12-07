@@ -1,0 +1,20 @@
+<ItemSearchResponse>
+  <Items>
+    <Item>
+      <ItemAttributes>
+        <ListPrice>
+          <Amount>2260</Amount>
+        </ListPrice>
+      </ItemAttributes>
+      <Offers>
+        <Offer>
+          <OfferListing>
+            <Price>
+              <Amount>1853</Amount>
+            </Price>
+          </OfferListing>
+        </Offer>
+      </Offers>
+    </Item>
+  </Items>
+</ItemSearchResponse>

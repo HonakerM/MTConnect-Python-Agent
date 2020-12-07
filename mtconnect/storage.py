@@ -92,6 +92,7 @@ class MTBuffer():
         
         if(count <= 0):
             return ([],seq)
+
         #get location in the buffer
         buffer_loc = seq - self.first_sequence
 
@@ -103,6 +104,9 @@ class MTBuffer():
         #get next_sequence calculations
         next_sequence = self.buffer[end_pos-1].sequence_number + 1
         return (self.buffer[buffer_loc:end_pos],next_sequence)
+    
+    def empty(self):
+        return self.first_sequence is None
     #
     # Mutator  Functions
     #
