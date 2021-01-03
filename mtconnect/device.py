@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 #import mtcitems
 from .standard_list import MTC_DataID_list
 
-#class helper for MTDevice/MTComponent to display component tree
+#class helper for MTGeneric to display component tree
 def tree_helper(component, level=0):
     output_string = '+'+ ('-'*5)*level + str(component.id)+'\n'
     for item in component.get_sub_items():
@@ -16,6 +16,20 @@ def tree_helper(component, level=0):
         output_string = output_string + tree_helper(comp,level+1)
 
     return output_string
+
+#class helper for MTGeneric to get all subcomponents
+def item_helper(component):
+    output_list = []
+    item_list = component.get_sub_items()
+    for item in item_list:
+        output_list.append(item)
+    
+    component_list = component.get_sub_components()
+    for component in component_list:
+        output_list = output_list + item_helper(component)
+    
+    return output_list
+        
 
 class MTGeneric:
     # ! Use: Generic item for all parts of device. Includes components and data_list
@@ -33,7 +47,7 @@ class MTGeneric:
 
     def __init__(self, id, name, component):
         if(id is None):
-            raise ValueError('Missing required value for MTC')
+            raise ValueError('Missing required id for MTC')
         
 
         self.id = id
@@ -85,6 +99,9 @@ class MTGenericContainer(MTGeneric):
     def get_sub_items(self):
         return list(self.items.values())
 
+    #get all sub items of component
+    def get_all_sub_items(self):
+        return item_helper(self)
 
     def display_tree(self):
         return tree_helper(self)
@@ -100,8 +117,9 @@ class MTDevice(MTGenericContainer):
     item_dict = {}
     component_dict = {}
     
-    def __init__(self,id, name,xml_data, uuid=None, description=None):
+    def __init__(self,id, name,xml_data, uuid, description=None):
         super().__init__(id, name, xml_data, None, description)
+            
         self.uuid = uuid
         self.item_dict={}
         self.component_dict={}
@@ -149,7 +167,7 @@ class MTDataItem(MTGeneric):
     #list of data entity assigned
     data_list = []
 
-    def __init__(self, id, type, category, device, component):
+    def __init__(self, id, name, type, category, device, component):
         
 
         category = category.upper()
@@ -165,7 +183,7 @@ class MTDataItem(MTGeneric):
         if(id in device.get_sub_item()):
             raise ValueError('id must be unique. {} has been used'.format(id))
         
-        super().__init__(id,None,component)
+        super().__init__(id,name,component)
 
         self.type = type
         self.category = category
@@ -179,5 +197,17 @@ class MTDataItem(MTGeneric):
     def pop_data(self):
         self.data_list.pop(0)
 
+    def get_data(self, seq=float('inf')):
+        output_list = []
+        for data in self.data_list:
+            if(data.sequence_number<=seq):
+                output_list.append(data)
+        return output_list
+    
+    def get_current(self, seq=float('inf')):
+        data = self.get_data(seq)
+        if(not data):
+            return None
 
+        return data[-1]
     

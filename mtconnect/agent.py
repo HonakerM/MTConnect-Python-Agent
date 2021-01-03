@@ -54,7 +54,7 @@ class MTConnect():
     def get_dataId(self,dataId):
         for device in self.device_dict.values():
             if(dataId in device.get_sub_item()):
-                return device.item_list[dataId]
+                return device.item_dict[dataId]
         raise ValueError('DataID {} is not found'.format(dataId))
 
     #push data from machines
@@ -76,7 +76,7 @@ class MTConnect():
     #run MTConnect probe command
     def probe(self):
         root_container = ElementTree.Element('MTConnectDevices')
-        root_container.append(self.get_header())
+
 
         device_container = ElementTree.SubElement(root_container, 'Devices')
         for device in self.device_dict:
@@ -89,7 +89,7 @@ class MTConnect():
         pass
 
     #run MTConnnect current command
-    def current(self, at, path=None, interval=None):
+    def current(self, at=None, path=None, interval=None):
         #data validation
         if(at is None and interval is None):
             raise MTInvalidRequest("Either At or Interval must not be None")
@@ -111,9 +111,67 @@ class MTConnect():
             component_list = process_path(self.device_xml, path, self.item_dict, self.component_dict)
         else:
             component_list = list(self.device_dict.values())
+
+        #get all sub items from path
+        item_list = set()
+        for component in component_list:
+            item_list = item_list.union(set(component.get_all_sub_items()))
+        item_list = list(item_list)
+
+        #get all itesm last dataitem
+        current_dict = {}
+        for item in item_list:
+            #get data and skip if None
+            data = item.get_current()
+            if(data is None):
+                continue
+            
+            #if device had no data yet then initialize
+            if(item.device not in current_dict):
+                current_dict[item.device] = {}
+
+            #if component has no data then initialize
+            if item.parent_component not in current_dict[item.device]:
+                current_dict[item.device][item.parent_component] = {}
+
+            if item.category not in current_dict[item.device][item.parent_component]:
+                current_dict[item.device][item.parent_component][item.category]=[]
+            
+            
+            
+            current_dict[item.device][item.parent_component][item.category].append(data)
         
-        print(component_list)
-                
+        current_stream = ElementTree.Element('Streams')
+        for device in current_dict:
+            device_element = ElementTree.SubElement(current_stream, 'DeviceStream')
+            device_element.set('name',device.name)
+            device_element.set('uuid',device.uuid)
+
+
+            #loop through all data iterms and compoments
+            for component in current_dict[device]:
+                #get root component stream
+                stream_element = ElementTree.SubElement(device_element, 'ComponentStream')
+                stream_element.set('component',component.type)
+                stream_element.set('name',component.name)
+                stream_element.set('componentId',component.id)
+
+                #get data
+                component_data = current_dict[device][component]
+
+                #For each category add data to xml
+                for category in component_data:
+                    sample_container = ElementTree.SubElement(stream_element, category.title()+'s')
+                    for item in component_data[category]:
+                        
+                        sample_container.append(item.get_xml())
+
+        root_container = ElementTree.Element('MTConnectStreams')
+        root_container.append(self.get_header())
+        root_container.append(current_stream)
+        return ElementTree.tostring(root_container).decode()
+            
+
 
     def error(self, error_text):
         pass

@@ -14,7 +14,9 @@ def process_path(device_xml,path, item_dict, component_dict):
     xml_list = device_xml.findall(path)
     component_list = []
     for element in xml_list:
+        
         id = element.get('id')
+        print(id)
         if(id in item_dict):
             component_list.append(item_dict[id])
 
@@ -34,9 +36,10 @@ def process_dataitem(item_list, device, component):
         id = item.get('id')
         category = item.get('category')
         type = item.get('type')
+        name = item.get('name')
 
     
-        new_item = MTDataItem(id,type,category,device,component)
+        new_item = MTDataItem(id,name, type,category,device,component)
         
         for attribute in item.items():
             new_item.add_attribute(attribute[0], attribute[1])

@@ -1,9 +1,10 @@
 import os #enviormentl variabels
 import datetime #get currenttime
 import numbers #verrify value is number
+from xml.etree import ElementTree #generate xml
 
 #MTConnect Imports
-
+from .helper import type_to_pascal
 class MTDataEntity():
     # ! Use: Handle the individual data values
     # ? Data: Holds sequence number, tiemstamp, and data 
@@ -38,9 +39,22 @@ class MTDataEntity():
     #
     # Accessor Functions 
     #
-
+    
+    #get timestamp as MTCOnnect formated string
     def get_time_str(self):
         return self.timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    #get xml data for current/sample
+    def get_xml(self):
+        element = ElementTree.Element(type_to_pascal(self.dataItem.type))
+        element.set('dataItemId',self.dataItem.id)
+        element.set('timestamp',self.get_time_str())
+        if(self.dataItem.name is not None):
+            element.set('name',self.dataItem.name)
+
+        element.set('sequence',str(self.sequence_number))
+        element.text = str(self.value)
+        return element
 
     #
     # Mutator Functions 
@@ -86,10 +100,16 @@ class MTBuffer():
     def get_buffer(self):
         return self.buffer
 
-    def get_data(self, seq, count):
+    def get_data(self, seq, count=None):
+        #if requested sequence is to below sequence
         if(seq<self.first_sequence):
             return ([],self.first_sequence)
         
+        #if count is none get max count
+        if(count == None):
+            count = self.buffer_size
+
+        #if count is <= 0 then return nothing
         if(count <= 0):
             return ([],seq)
 
