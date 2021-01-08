@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="MTConnect",
-    version="0.1.2",
+    version="0.2.0",
     author="Michael Honaker",
     author_email="mchonaker@gmail.com",
     description="A python agent for MTConnect",

@@ -23,8 +23,7 @@ class MTDataEntity():
     def __init__(self, dataItem, value):
         #set values
         self.dataItem = dataItem
-
-        if(dataItem.category =='SAMPLE' and not isinstance(value, numbers.Number)):
+        if(dataItem.category =='SAMPLE' and (not isinstance(value, numbers.Number) and value!="UNAVAILABLE")):
             raise ValueError('SAMPLE value must be number')
             
         if(dataItem.category =='EVENT' and not isinstance(value, str)):
@@ -53,8 +52,10 @@ class MTDataEntity():
             element.set('name',self.dataItem.name)
 
         element.set('sequence',str(self.sequence_number))
+
         element.text = str(self.value)
         return element
+
 
     #
     # Mutator Functions 

@@ -3,6 +3,7 @@ from xml.etree import ElementTree
 
 #import mtcitems
 from .standard_list import MTC_DataID_list
+from .storage import MTDataEntity
 
 #class helper for MTGeneric to display component tree
 def tree_helper(component, level=0):
@@ -61,6 +62,9 @@ class MTGeneric:
     #add attribute to container
     def add_attribute(self, name, value):
         self.attributes[name] = value
+    
+    def __str__(self):
+        return "{} with id {} and name {} with parent {}".format(type(self),self.id,self.name,self.parent_component)
     
 
 class MTGenericContainer(MTGeneric):
@@ -163,7 +167,9 @@ class MTDataItem(MTGeneric):
     #parent variable
     device = None
 
-    
+    #initial value
+    initial = None
+
     #list of data entity assigned
     data_list = []
 
@@ -189,9 +195,15 @@ class MTDataItem(MTGeneric):
         self.category = category
 
         self.device = device
+
+        
+
     
     #Handle DataEntitys assigned
     def push_data(self, DataEntity):
+        if(self.initial is None):
+            self.initial = DataEntity
+
         self.data_list.append(DataEntity)
     
     def pop_data(self):
@@ -207,7 +219,7 @@ class MTDataItem(MTGeneric):
     def get_current(self, seq=float('inf')):
         data = self.get_data(seq)
         if(not data):
-            return None
+            return self.initial
 
         return data[-1]
     

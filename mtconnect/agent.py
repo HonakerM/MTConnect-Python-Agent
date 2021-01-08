@@ -9,7 +9,7 @@ from numbers import Number
 from .storage import MTBuffer, MTDataEntity
 from .xmlhelper import read_devices, process_path
 from .error import MTInvalidRequest, MTInvalidRange
-
+from .device import MTComponent, MTDevice
 
 class MTConnect():
     # ! Use: Handle MTConnect agent
@@ -42,6 +42,7 @@ class MTConnect():
         file_location = os.getenv('MTCDeviceFile',loc)
         device_data = read_devices(file_location)
 
+        #Update item dict to contain all items
         self.device_dict, self.device_xml  = device_data
         for device in self.device_dict.values():
             self.item_dict.update(device.item_dict)
@@ -49,6 +50,10 @@ class MTConnect():
 
         #generate instanceId -64bit int uuid4 is 128 so shift it
         self.instanceId = uuid.uuid4().int & (1<<64)-1
+
+        #create inital values for item
+        for item in self.item_dict.values():
+            self.push_data(item.id, "UNAVAILABLE")
 
     #validate pushing data
     def get_dataId(self,dataId):
@@ -92,7 +97,7 @@ class MTConnect():
     def current(self, at=None, path=None, interval=None):
         #data validation
         if(at is None and interval is None):
-            raise MTInvalidRequest("Either At or Interval must not be None")
+            at = self.buffer.first_sequence
 
         if(at is not None and interval is not None):
             raise MTInvalidRequest("At and Interval must not be used in conjunction")
@@ -121,10 +126,9 @@ class MTConnect():
         #get all itesm last dataitem
         current_dict = {}
         for item in item_list:
+
             #get data and skip if None
             data = item.get_current()
-            if(data is None):
-                continue
             
             #if device had no data yet then initialize
             if(item.device not in current_dict):
@@ -150,9 +154,13 @@ class MTConnect():
 
             #loop through all data iterms and compoments
             for component in current_dict[device]:
+
                 #get root component stream
                 stream_element = ElementTree.SubElement(device_element, 'ComponentStream')
-                stream_element.set('component',component.type)
+                if(isinstance(component, MTComponent)):
+                    stream_element.set('component',component.type)
+                elif(isinstance(component, MTDevice)):
+                    stream_element.set('component','Device')
                 stream_element.set('name',component.name)
                 stream_element.set('componentId',component.id)
 
