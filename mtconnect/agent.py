@@ -145,8 +145,10 @@ class MTConnect():
             
             current_dict[item.device][item.parent_component][item.category].append(data)
         
+        #format the output xml
         current_stream = ElementTree.Element('Streams')
         for device in current_dict:
+            #create root device stream
             device_element = ElementTree.SubElement(current_stream, 'DeviceStream')
             device_element.set('name',device.name)
             device_element.set('uuid',device.uuid)
@@ -173,7 +175,7 @@ class MTConnect():
                     for item in component_data[category]:
                         
                         sample_container.append(item.get_xml())
-
+        #format final xml
         root_container = ElementTree.Element('MTConnectStreams')
         root_container.append(self.get_header())
         root_container.append(current_stream)
