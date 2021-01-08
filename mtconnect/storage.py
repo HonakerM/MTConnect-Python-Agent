@@ -78,10 +78,7 @@ class MTBuffer():
     last_sequence = None #newest piece of data
     buffer_pos = 0 #keep track of place in buffer
 
-    
 
-    #keep track of previous values flowing through the buffer
-    last_value = {}
 
     #
     # Constructor Functions
@@ -128,6 +125,10 @@ class MTBuffer():
     
     def empty(self):
         return self.first_sequence is None
+
+    def size(self):
+        return self.buffer_size    
+
     #
     # Mutator  Functions
     #
@@ -145,7 +146,7 @@ class MTBuffer():
             last_item.dataItem.pop_data()
             
             #update last item list
-            self.last_value[last_item.dataItem.id] = last_item
+            last_item.last_value = last_item
 
             #update sequence
             self.first_sequence = self.buffer[0].sequence_number

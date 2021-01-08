@@ -167,8 +167,9 @@ class MTDataItem(MTGeneric):
     #parent variable
     device = None
 
-    #initial value
-    initial = None
+    #Last value thats outside the buffer
+    ##used in current 
+    last_value = None
 
     #list of data entity assigned
     data_list = []
@@ -201,25 +202,25 @@ class MTDataItem(MTGeneric):
     
     #Handle DataEntitys assigned
     def push_data(self, DataEntity):
-        if(self.initial is None):
-            self.initial = DataEntity
+        if(self.last_value is None):
+            self.last_value = DataEntity
 
         self.data_list.append(DataEntity)
     
     def pop_data(self):
         self.data_list.pop(0)
 
-    def get_data(self, seq=float('inf')):
+    def get_data(self, start_sequence=float('-inf'), end_sequence=float('inf')):
         output_list = []
         for data in self.data_list:
-            if(data.sequence_number<=seq):
+            if(data.sequence_number>start_sequence and data.sequence_number<=end_sequence):
                 output_list.append(data)
         return output_list
     
     def get_current(self, seq=float('inf')):
-        data = self.get_data(seq)
+        data = self.get_data(end_sequence=seq)
         if(not data):
-            return self.initial
+            return self.last_value
 
         return data[-1]
     
