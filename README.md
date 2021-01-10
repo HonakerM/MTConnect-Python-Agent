@@ -1,4 +1,5 @@
 # MTConnect-Python-Agent
+## Purpose
 Python agent for MTConnect applications.
 
 This library helps store, and format data for MTConnect. The 
@@ -7,4 +8,27 @@ This package does not handle the HTTP aspect of the standard.
 It is designed to be used in conjunction with a wsgi interface like
 flask or django.
 
-At the time of writting the library is not feature complete. Currently in the works is to get a minimal MTConnect instance operational. This library supports Devices, Components, DataItems, and Steams.
+At the time of writting the library is not feature complete. The current implementation is
+a minimal MTConnect instance operational. This library supports Devices, Components, DataItems, and Steams.
+As well as the probe, current, and sample commands.
+
+## Use
+To use this library first import the `mtconnect` module.
+
+`import mtconnect`
+
+Then create an instance of the MTConnect Agent
+
+`instance = mtconnect.MTConnect()`
+
+The instance requires a xml file with the device descriptions. The default location is `./device.xml`. This can
+be changed by setting the loc value as shown below.
+
+`instance = mtconnect.MTconnect(loc='./other_device.xml')`
+
+The instance creation also sets the hostname. This hostname is required by the mtconnect standard in the header of all responses. This can be set by providing the hostname variable as shown below.
+
+`instance = mtconnect.MTconnect(hostname='10.0.0.1:8000')`
+
+
+
