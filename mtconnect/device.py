@@ -1,4 +1,5 @@
 #general imports
+import uuid 
 from xml.etree import ElementTree
 
 #import mtcitems
@@ -121,10 +122,13 @@ class MTDevice(MTGenericContainer):
     item_dict = {}
     component_dict = {}
     
-    def __init__(self,id, name,xml_data, uuid, description=None):
+    def __init__(self,id, name,xml_data, unique_id=None, description=None):
         super().__init__(id, name, xml_data, None, description)
-            
-        self.uuid = uuid
+        
+        if(unique_id is None):
+            unique_id = uuid.uuid4()
+
+        self.uuid = unique_id
         self.item_dict={}
         self.component_dict={}
     

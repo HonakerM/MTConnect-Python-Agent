@@ -31,4 +31,3 @@ The instance creation also sets the hostname. This hostname is required by the m
 `instance = mtconnect.MTconnect(hostname='10.0.0.1:8000')`
 
 
-

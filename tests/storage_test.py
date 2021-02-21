@@ -80,7 +80,7 @@ class BufferTest(unittest.TestCase):
     def testBufferGet(self):
         buffer = MTBuffer(buffer_length=2)
 
-        test_device = MTDevice('test_device','1',None)
+        test_device = MTDevice('test_device','1','1',None)
         test_item = MTDataItem('test_1','SYSTEM','SAMPLE',test_device,test_device)
         data_1 = MTDataEntity(test_item,1)
         data_2 = MTDataEntity(test_item,2)
