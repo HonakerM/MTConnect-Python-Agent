@@ -111,6 +111,7 @@ class MTConnect():
         for device in self.device_dict:
             device_container.append(self.device_dict[device].xml_data)
         
+        root_container.append(self.get_header())
         return ElementTree.tostring(root_container).decode()
 
     #run MTConnect sample command
