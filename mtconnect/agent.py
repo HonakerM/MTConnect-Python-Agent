@@ -131,19 +131,19 @@ class MTConnect():
             count = 100
 
         if(not isinstance(start, Number) and start<0):
-            raise MTInvalidRequest("Start must be a non negative number")
+            return MTInvalidRequest(self, "Start must be a non negative number").to_xml()
 
         if(not isinstance(count, Number) ):
-            raise MTInvalidRequest("Count must be a number")
+            return MTInvalidRequest(self, "Count must be a number").to_xml()
         
         if(self.buffer.empty()):
-            raise MTInvalidRange("Buffer is currently empty")
+            return MTInvalidRange(self, "Buffer is currently empty").to_xml()
 
         if(start < self.buffer.first_sequence or start > self.buffer.last_sequence):
-            raise MTInvalidRange("Start must be between {} and {}".format(self.buffer.first_sequence, self.buffer.last_sequence))
+            return MTInvalidRange(self, "Start must be between {} and {}".format(self.buffer.first_sequence, self.buffer.last_sequence)).to_xml()
     
         if(abs(count) > self.buffer.size()):
-            raise MTInvalidRange("Count must not be greater than {}".format(self.buffer.size()))
+            return MTInvalidRange(self, "Count must not be greater than {}".format(self.buffer.size()))
         
         #put count and start into usable formats
         if(count < 0):
@@ -229,13 +229,13 @@ class MTConnect():
 
 
         if(not isinstance(at, Number) and at<0):
-            raise MTInvalidRequest("At must be a non negative number")
+            return MTInvalidRequest(self, "At must be a non negative number")
         
         if(self.buffer.empty()):
-            raise MTInvalidRange("Buffer is currently empty")
+            return MTInvalidRange(self, "Buffer is currently empty")
 
         if(at < self.buffer.first_sequence or at > self.buffer.last_sequence):
-            raise MTInvalidRange("At must be between {} and {}".format(self.buffer.first_sequence, self.buffer.last_sequence))
+            return MTInvalidRange(self, "At must be between {} and {}".format(self.buffer.first_sequence, self.buffer.last_sequence))
 
         #apply path variable
         if(path is not None):
