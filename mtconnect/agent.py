@@ -10,7 +10,7 @@ from .storage import MTBuffer, MTDataEntity
 from .xmlhelper import read_devices, process_path
 from .error import MTInvalidRequest, MTInvalidRange
 from .device import MTComponent, MTDevice
-
+from .loghandler import MTLogger
 class MTConnect():
     # ! Use: Handle MTConnect agent
     # ? Data:
@@ -32,6 +32,7 @@ class MTConnect():
 
 
     def __init__(self,loc='./device.xml',hostname='http://0.0.0.0:80'):
+        MTLogger.info("Initializing MTConnect Agent")
         #set variables
         self.hostname = hostname
 
@@ -40,7 +41,10 @@ class MTConnect():
 
         #read device information
         file_location = os.getenv('MTCDeviceFile',loc)
+        MTLogger.debug('Reading Devices from {}'.format(file_location))
         device_data = read_devices(file_location)
+
+        
 
         #Update item dict to contain all items
         self.device_dict, self.device_xml  = device_data
@@ -50,6 +54,7 @@ class MTConnect():
 
         #generate instanceId -64bit int uuid4 is 128 so shift it
         self.instanceId = uuid.uuid4().int & (1<<64)-1
+        MTLogger.debug('Settings UUID to {}'.format(self.instanceId))
 
         #create inital values for item
         for item in self.item_dict.values():
