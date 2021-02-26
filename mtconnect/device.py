@@ -134,7 +134,7 @@ class MTDevice(MTGenericContainer):
         super().__init__(id, name, xml_data, None, description)
         
         if(unique_id is None):
-            unique_id = uuid.uuid4()
+            unique_id = str(uuid.uuid4())
 
         self.uuid = unique_id
         self.item_dict={}
