@@ -231,7 +231,7 @@ class MTConnect():
             at = self.buffer.first_sequence
 
 
-        if(not isinstance(at, Number) and at<0):
+        if(not isinstance(at, Number) or at<0):
             return MTInvalidRequest(self, "At must be a non negative number")
         
         if(self.buffer.empty()):
