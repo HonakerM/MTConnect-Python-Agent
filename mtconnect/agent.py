@@ -53,12 +53,15 @@ class MTConnect():
             self.component_dict.update(device.component_dict)
 
         #generate instanceId -64bit int uuid4 is 128 so shift it
-        self.instanceId = uuid.uuid4().int & (1<<64)-1
+        self.instanceId = str(uuid.uuid4().int & (1<<64)-1)
         MTLogger.debug('Settings UUID to {}'.format(self.instanceId))
 
         #create inital values for item
         for item in self.item_dict.values():
             self.push_data(item.id, "UNAVAILABLE")
+        
+        MTLogger.info("Finished Initalizing MTConnect Agent")
+
     #
     # Accessor Functions
     #
