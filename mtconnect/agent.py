@@ -257,7 +257,7 @@ class MTConnect():
         for item in item_list:
 
             #get data 
-            data = item.get_current()
+            data = item.get_current(at)
             
             #if device had no data yet then initialize
             if(item.device not in current_dict):
