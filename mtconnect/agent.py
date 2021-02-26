@@ -54,6 +54,20 @@ class MTConnect():
         #create inital values for item
         for item in self.item_dict.values():
             self.push_data(item.id, "UNAVAILABLE")
+    #
+    # Accessor Functions
+    #
+    def get_device_list(self):
+        return self.device_dict.values()
+    
+    def get_device(self,name=None):
+        if(name is None):
+            return get_device_list()[0]
+        else:
+            return self.device_dict[name]
+    #
+    # Data Functions
+    #
 
     #validate pushing data
     def get_dataId(self,dataId):
@@ -67,6 +81,11 @@ class MTConnect():
         dataItem = self.get_dataId(dataId)
         new_data = MTDataEntity(dataItem, value)
         self.buffer.push(new_data)
+
+
+    #
+    # MTConnect/XML Functions   
+    # 
 
     def get_header(self):
         header_element = ElementTree.Element('Header')

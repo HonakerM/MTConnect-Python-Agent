@@ -59,6 +59,14 @@ class MTGeneric:
         self.attributes = {}
         self.data_list = []
 
+    #
+    # Modifiers
+    #
+    def set_name(self, name):
+        self.name = name
+
+    def set_id(self,id):
+        self.id = id
 
     #add attribute to container
     def add_attribute(self, name, value):
