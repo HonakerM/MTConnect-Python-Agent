@@ -228,7 +228,7 @@ class MTConnect():
     def current(self, at=None, path=None):
         #data validation
         if(at is None):
-            at = self.buffer.first_sequence
+            at = self.buffer.last_sequence
 
 
         if(not isinstance(at, Number) or at<0):
