@@ -11,12 +11,12 @@ import datetime
 
 
 
-class DataEntity(unittest.TestCase):
+class DataEntityTest(unittest.TestCase):
     test_device = None
     test_item_1 =  None
 
     def __init__(self, *args, **kwargs):
-        super(DataEntity, self).__init__(*args, **kwargs)
+        super(DataEntityTest, self).__init__(*args, **kwargs)
 
         self.test_device = MTDevice('test_device','1',None)
         self.test_item_1 = MTDataItem('test_1','test_1','SYSTEM','SAMPLE',self.test_device,self.test_device)
