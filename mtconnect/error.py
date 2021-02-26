@@ -1,3 +1,5 @@
+from xml.etree import ElementTree
+
 class MTError():
     name = ''
     message = ''
