@@ -46,6 +46,67 @@ instance.probe()
 instance.sample(path=None, start=None, count=None)
 instance.current(at=None, path=None)
 ```
+## Example
+Here is a working example using flask. If you would like to see a working implementaiton in a real world example take a look at [this repository](https://github.com/RPIForge/octoprint-companion)
+
+```
+from flask import Flask, Response, request
+import mtconnect
+import json
+
+agent = MTConnect()
+app = Flask(__name__)
+
+
+@app.route('/probe')
+def probe():
+    return Response(agent.probe(), mimetype='text/xml')
+
+@app.route('/current', defaults={'identifier': None})
+@app.route('/<identifier>/current')
+def current(identifier):
+    path = request.args.get('path', None)
+    at = request.args.get('at', None)
+ 
+    try:
+        at = int(at)
+    except:
+        pass
+
+    if(identifier is not None):
+        path = ".//*[@id='{}'] | .//*[@name='{}']".format(identifier,identifier)
+
+    response = Response(agent.current(at, path), mimetype='text/xml')
+    return response
+
+@app.route('/sample', defaults={'identifier': None})
+@app.route('/<identifier>/sample')
+def sample(identifier):
+    path = request.args.get('path', None)
+    start = request.args.get('from', None)
+    count = request.args.get('count',None)
+
+    try:
+        at = int(at)
+    except:
+        pass
+
+    try:
+        count = int(count)
+    except:
+        pass 
+    
+    try:
+        start = int(start)
+    except:
+        pass
+    
+    if(identifier is not None):
+        path = ".//*[@id='{}'] | .//*[@name='{}']".format(identifier,identifier)
+
+    response = Response(agent.sample(path,start,count), mimetype='text/xml')
+    return response
+```
 
 ## Development
 
