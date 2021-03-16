@@ -89,17 +89,17 @@ def sample(identifier):
     try:
         at = int(at)
     except:
-        pass
+        at = None
 
     try:
         count = int(count)
     except:
-        pass 
+        count = None 
     
     try:
         start = int(start)
     except:
-        pass
+        start = None
     
     if(identifier is not None):
         path = ".//*[@id='{}'] | .//*[@name='{}']".format(identifier,identifier)
