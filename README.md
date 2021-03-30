@@ -51,7 +51,7 @@ Here is a working example using flask. If you would like to see a working implem
 
 ```
 from flask import Flask, Response, request
-import mtconnect
+from mtconnect import MTConnect
 import json
 
 agent = MTConnect()
@@ -66,12 +66,7 @@ def probe():
 @app.route('/<identifier>/current')
 def current(identifier):
     path = request.args.get('path', None)
-    at = request.args.get('at', None)
- 
-    try:
-        at = int(at)
-    except:
-        pass
+    at = request.args.get('at', None, type=int)
 
     if(identifier is not None):
         path = ".//*[@id='{}'] | .//*[@name='{}']".format(identifier,identifier)
@@ -83,29 +78,17 @@ def current(identifier):
 @app.route('/<identifier>/sample')
 def sample(identifier):
     path = request.args.get('path', None)
-    start = request.args.get('from', None)
-    count = request.args.get('count',None)
+    start = request.args.get('from', None, type=int)
+    count = request.args.get('count',None, type=int)
 
-    try:
-        at = int(at)
-    except:
-        at = None
-
-    try:
-        count = int(count)
-    except:
-        count = None 
-    
-    try:
-        start = int(start)
-    except:
-        start = None
-    
     if(identifier is not None):
         path = ".//*[@id='{}'] | .//*[@name='{}']".format(identifier,identifier)
 
     response = Response(agent.sample(path,start,count), mimetype='text/xml')
     return response
+    
+## Add Data
+agent.push_data('avail','AVAILABLE')
 ```
 
 ## Development
