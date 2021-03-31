@@ -39,7 +39,7 @@ To push data to the buffer use the following command. The `dataId` is the same a
 instance.push_data(dataId, value)
 ```
 
-To access the commands you can run either of the following commands. The corispond to the `probe`, `sample`, `current` endpoints in the mtconnect standard. To filter by uuid/name use xpath in the format `//*[@name=<name>]` or `//*[@id=<uuid>]` though this functionality is still being worked on and is not recommended.
+To access the commands you can run either of the following commands. The corispond to the `probe`, `sample`, `current` endpoints in the mtconnect standard. To filter by uuid/name use xpath in the format `//*[@name=<name>]` or `//*[@id=<uuid>]` though this functionality is still being worked on and is not fully functional.
 
 ```
 instance.probe()

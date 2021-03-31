@@ -12,12 +12,10 @@ from .device import MTDevice, MTComponent, MTDataItem
 #
 def process_path(device_xml,path, item_dict, component_dict):  
     xml_list = device_xml.findall(path)
-    print(xml_list)
     component_list = []
     for element in xml_list:
         
         id = element.get('id')
-        print(id)
         if(id in item_dict):
             component_list.append(item_dict[id])
 
