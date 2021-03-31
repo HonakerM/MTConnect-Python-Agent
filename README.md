@@ -49,6 +49,8 @@ instance.current(at=None, path=None)
 ## Example
 Here is a working example using flask. If you would like to see a working implementaiton in a real world example take a look at [this repository](https://github.com/RPIForge/octoprint-companion)
 
+To run this example first install flask and mtconnect using `pip3 install --upgrade mtconnect flask`. And then start the agent with `flask_app=<file_name> python3 -m flask run`. For example if the code is saved in `mttest.py` the command would be `FLASK_APP=mttest python3 -m flask run`
+
 ```
 from flask import Flask, Response, request
 from mtconnect import MTConnect
@@ -60,7 +62,8 @@ app = Flask(__name__)
 
 @app.route('/probe')
 def probe():
-    return Response(agent.probe(), mimetype='text/xml')
+    response = agent.probe()
+    return Response(response.get_xml(),status=response.get_status(), mimetype='text/xml')
 
 @app.route('/current', defaults={'identifier': None})
 @app.route('/<identifier>/current')
@@ -71,8 +74,8 @@ def current(identifier):
     if(identifier is not None):
         path = ".//*[@id='{}'] | .//*[@name='{}']".format(identifier,identifier)
 
-    response = Response(agent.current(at, path), mimetype='text/xml')
-    return response
+    response = agent.current(at, path)
+    return Response(response.get_xml(),status=response.get_status(), mimetype='text/xml')
 
 @app.route('/sample', defaults={'identifier': None})
 @app.route('/<identifier>/sample')
@@ -84,10 +87,10 @@ def sample(identifier):
     if(identifier is not None):
         path = ".//*[@id='{}'] | .//*[@name='{}']".format(identifier,identifier)
 
-    response = Response(agent.sample(path,start,count), mimetype='text/xml')
-    return response
+    response = agent.sample(path,start,count)
+    return responseResponse(response.get_xml(),status=response.get_status(), mimetype='text/xml')
     
-## Add Data
+## Push data to the agent
 agent.push_data('avail','AVAILABLE')
 ```
 
