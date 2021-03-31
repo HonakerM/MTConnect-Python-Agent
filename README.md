@@ -20,7 +20,7 @@ instance = mtconnect.MTConnect()
 ```
 
 
-The instance requires a xml file with the device descriptions. The default location is `./device.xml`. This can be changed by setting the loc value as shown below. This file is in the format of the `Device` element xml and will be returned by the `probe` command.
+The instance requires a xml file with the device descriptions. The default location is `./device.xml`. This can be changed by setting the loc value as shown below. This file is in the format of the `Device` element xml and will be returned by the `probe` command. Be aware that only one device is currently supported. There are plans to support multiple devices in the future.
 
 ```
 instance = mtconnect.MTconnect(loc='./other_device.xml')
@@ -99,4 +99,5 @@ agent.push_data('avail','AVAILABLE')
 There are still limitations to this library. Here is a list of features that are still needed that are being worked on. They are in no particular order
 
 * Disk buffer. Allow the user to store data on disk using h5py instead of in memory
+* Implement multiple devices. Current each instance only supports one device. This should be a relatively easy fix in the push_data function
 * Implement entire MTConnect standard. Currently I do not handle assets or interfaces
