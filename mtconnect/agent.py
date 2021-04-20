@@ -88,13 +88,23 @@ class MTConnect():
     # Accessor Functions
     #
     def get_device_list(self):
-        return self.device_dict.values()
+        return list(self.device_dict.values())
     
     def get_device(self,name=None):
         if(name is None):
-            return get_device_list()[0]
+            return self.get_device_list()[0]
         else:
             return self.device_dict[name]
+
+    #
+    # Modifier Functions
+    #
+    def set_device_id(self,device,id):
+        device.set_id(id)
+
+    def set_device_name(self,device,name):
+        device.set_name(name)
+
     #
     # Data Functions
     #

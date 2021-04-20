@@ -95,6 +95,14 @@ class MTGenericContainer(MTGeneric):
         self.sub_components = {}
         self.items = {}
         
+    def set_name(self, name):
+        super().set_name(name)
+        self.xml_data.set('name',name)
+
+    def set_id(self,id):
+        super().set_id(id)
+        self.xml_data.set('id',id)
+
 
     #add subaccount directly to container
     def add_subcomponent(self, Component):
@@ -139,7 +147,9 @@ class MTDevice(MTGenericContainer):
         self.uuid = unique_id
         self.item_dict={}
         self.component_dict={}
-    
+    #
+    # Modifier
+    #     
     def add_subcomponent(self, Component):
         super().add_subcomponent(Component)
         self.component_dict[Component.id] = Component
