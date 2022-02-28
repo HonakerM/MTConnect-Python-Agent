@@ -76,7 +76,9 @@ def process_components(component_list, device, parent_component):
         #get list of subcomponents
         sub_component_item = component.find('Components')
         if(sub_component_item is not None):
-            sub_component_list = sub_component_item.getchildren()
+            sub_component_list = []
+            for item in sub_component_item:
+                sub_component_list.append(item)
             process_components(sub_component_list, device, new_component)        
 
 #read device xml from file
@@ -92,7 +94,7 @@ def read_devices(file):
 
     #get devices
     root = device_tree.getroot()
-    for device in root.getchildren():
+    for device in root:
         #get identifiers for device
         device_name = device.get('name')
         device_uuid = device.get('uuid')
@@ -118,7 +120,9 @@ def read_devices(file):
         #get list of subcomponents
         component_item = device.find('Components')
         if(component_item is not None):
-            component_list = component_item.getchildren()
+            component_list = []
+            for item in component_item:
+                component_list.append(item)
             process_components(component_list, new_device, new_device)
 
         device_list[new_device.id]=new_device

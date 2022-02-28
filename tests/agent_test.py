@@ -15,7 +15,7 @@ class AgentTest(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
         super(AgentTest, self).__init__(*args, **kwargs)
-        self.test_agent = MTConnect(loc='tests/test_device.xml') 
+        self.test_agent = MTConnect(loc='test_device.xml')
  
 
     def testProbe(self):
