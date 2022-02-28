@@ -9,7 +9,7 @@ from numbers import Number
 from .storage import MTBuffer, MTDataEntity
 from .xmlhelper import read_devices, process_path
 from .error import MTInvalidRequest, MTInvalidRange
-from .device import MTComponent, MTDevice
+from .device import MTComponent, MTDevice, MTDataItem
 from .loghandler import MTLogger
 
 
@@ -287,7 +287,9 @@ class MTConnect():
         #get all sub items from path
         item_set = set()
         for component in component_list:
-            item_set = item_set.union(set(component.get_all_sub_items()))
+            if (isinstance(component, MTDataItem)):
+                return component_list
+            component.get_all_sub_items()
         return item_set
 
     #format data into xml
