@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "MTConnect"
+version = "0.3.3"
+description = "A python agent for MTConnect"
+authors = ["Michael Honaker <mchonaker@gmail.com>"]
+license = "\"Apache License 2.0\""
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
