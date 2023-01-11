@@ -23,9 +23,12 @@ jobs:
     - name: Bump Version
       run: |
        ./scripts/run_container.sh ${DOCKER_IMAGE} scripts/set_version.sh  "${GITHUB_REF_NAME}"
-       echo "VERSION_CHANGE=$(git diff --exit-code)" >> $GITHUB_ENV
+       git diff --exit-code
+       export VERSION_CHANGE=$(echo $?)
+       echo "VERSION_CHANGE=${VERSION_CHANGE}" >> $GITHUB_ENV
+
     - name: Commit Change
-      if: ${{ vars.VERSION_CHANGE == '1' }}
+      if: ${{ env.VERSION_CHANGE == '1' }}
       run: |
        git add .
        git commit -m 'Bump Version'
