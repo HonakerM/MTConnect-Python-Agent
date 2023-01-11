@@ -1,0 +1,31 @@
+name: Validate Build
+
+on:
+  release:
+    types: [published,prereleased]
+
+jobs:
+
+  publish:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: |
+       export DOCKER_IMAGE=mtconnect-python:$(date +%s)
+       echo "DOCKER_IMAGE=${DOCKER_IMAGE}" >> $GITHUB_ENV 
+       docker build . --file Dockerfile --tag ${DOCKER_IMAGE}
+    - name: Bump Version
+      run: |
+       ./scripts/run_container.sh ${DOCKER_IMAGE} scripts/set_version.sh  ${{ GITHUB_REF }}
+       echo "VERSION_CHANGE=$(git diff --exit-code)" >> $GITHUB_ENV
+    - name: Commit Change
+      if: ${{ vars.VERSION_CHANGE == '1' }}
+      run: |
+       git add .
+       git commit -m 'Bump Version'
+       git tag -d ${{ GITHUB_REF }}
+       git tag ${{ GITHUB_REF }}
+       git push --force origin ${{ GITHUB_REF }} 

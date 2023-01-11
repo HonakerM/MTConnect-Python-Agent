@@ -2,8 +2,10 @@ FROM python:3.8-slim as base
 
 WORKDIR /data
 
-# Install poetry
-RUN pip3 install poetry
+# Install deps
+RUN pip3 install poetry && \
+    apt update && \
+    apt install git -y
 
 # Copy depdencies and install base packages
 COPY pyproject.toml poetry.lock ./ 

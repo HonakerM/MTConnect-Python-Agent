@@ -1,0 +1,25 @@
+name: Validate Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  validate:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: |
+       export DOCKER_IMAGE=mtconnect-python:$(date +%s)
+       echo "DOCKER_IMAGE=${DOCKER_IMAGE}" >> $GITHUB_ENV 
+       docker build . --file Dockerfile --tag ${DOCKER_IMAGE}
+    - name: Test Format
+      run: ./scripts/run_container.sh ${DOCKER_IMAGE} scripts/format_package.sh --check 
+    - name: Test Package
+      run: ./scripts/run_container.sh ${DOCKER_IMAGE} scripts/test_package.sh
