@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 -m black .
+python3 -m black . "$@"
